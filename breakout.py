@@ -19,6 +19,12 @@ CENARIO_LIMITE_DIR   = 640
 CENARIO_LIMITE_CIMA  = 0
 CENARIO_LIMITE_BAIXO = 400
 
+COR_BLOCO_VERMELHO = (255, 0,   0)
+COR_BLOCO_LARANJA  = (252, 146, 7)
+COR_BLOCO_AMARELO  = (252, 252, 7)
+COR_BLOCO_VERDE    = (90 , 252, 7)
+COR_BLOCO_AZUL     = (36 , 7,   252)
+
 class App:
     def __init__(self):
         self._running = True
@@ -35,6 +41,14 @@ class App:
         ############################################
 
         self._display_surf.fill(CENARIO_COR)
+
+        self.blocos = [
+            [True, True, True, True, True, True, True, True],
+            [True, True, True, True, True, True, True, True],
+            [True, True, True, True, True, True, True, True],
+            [True, True, True, True, True, True, True, True],
+            [True, True, True, True, True, True, True, True]
+        ]
 
         ############################################
         ########## Inicializando jogador ###########
@@ -121,12 +135,52 @@ class App:
         if rect_jogador.colliderect(rect_bolinha):
             self.bolinha_baixo = False
 
+        y_bloco = 20
+        x_bloco = 0
+        for linha in self.blocos:
+            for bloco in linha:
+                rect_bloco = Rect(x_bloco, y_bloco, JOGADOR_LARGURA, JOGADOR_ALTURA)
+
+                if rect_bolinha.colliderect(rect_bloco):
+                    bloco = False
+
+                    self.bolinha_baixo = True
+
+                x_bloco += JOGADOR_LARGURA
+
+            x_bloco = 0
+            y_bloco += JOGADOR_ALTURA
+
     def on_render(self):
         self._display_surf.fill(CENARIO_COR)
 
         self._display_surf.fill(JOGADOR_COR, (self.x_jogador, self.y_jogador, JOGADOR_LARGURA, JOGADOR_ALTURA))
 
         self._display_surf.fill(BOLINHA_COR, (self.x_bolinha, self.y_bolinha, BOLINHA_LARGURA, BOLINHA_ALTURA))
+
+        indice_linha = 0
+        y_bloco = 20
+        x_bloco = 0
+        for linha in self.blocos:
+            for bloco in linha:
+                if bloco:
+                    if indice_linha == 0:
+                        self._display_surf.fill(COR_BLOCO_VERMELHO, (x_bloco, y_bloco, JOGADOR_LARGURA, JOGADOR_ALTURA))
+                    elif indice_linha == 1:
+                        self._display_surf.fill(COR_BLOCO_LARANJA, (x_bloco, y_bloco, JOGADOR_LARGURA, JOGADOR_ALTURA))
+                    elif indice_linha == 2:
+                        self._display_surf.fill(COR_BLOCO_AMARELO, (x_bloco, y_bloco, JOGADOR_LARGURA, JOGADOR_ALTURA))
+                    elif indice_linha == 3:
+                        self._display_surf.fill(COR_BLOCO_VERDE, (x_bloco, y_bloco, JOGADOR_LARGURA, JOGADOR_ALTURA))
+                    elif indice_linha == 4:
+                        self._display_surf.fill(COR_BLOCO_AZUL, (x_bloco, y_bloco, JOGADOR_LARGURA, JOGADOR_ALTURA))
+
+                x_bloco += JOGADOR_LARGURA
+
+            x_bloco = 0
+            y_bloco += JOGADOR_ALTURA
+
+            indice_linha += 1
 
         pygame.display.update()
 

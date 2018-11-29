@@ -59,6 +59,8 @@ class App:
         ########## Inicializando jogador ###########
         ############################################
 
+        self.mover_bolinha = False
+
         self.mover_esquerda = False
         self.mover_direita  = False
 
@@ -77,6 +79,9 @@ class App:
         self.x_bolinha = self.x_jogador + JOGADOR_LARGURA / 2
         self.y_bolinha = self.y_jogador - 2 * BOLINHA_ALTURA
 
+        self.x_bolinha -= 10
+        self.y_bolinha += 15
+
         self._display_surf.fill(BOLINHA_COR, (self.x_bolinha, self.y_bolinha, BOLINHA_LARGURA, BOLINHA_ALTURA))
 
         pygame.display.update()
@@ -87,6 +92,8 @@ class App:
         if event.type == pygame.QUIT:
             self._running = False
         elif event.type == pygame.KEYDOWN:
+            self.mover_bolinha = True
+
             if event.key == pygame.K_LEFT:
                 if self.x_jogador > CENARIO_LIMITE_ESQ:
                     self.mover_esquerda = True
@@ -111,27 +118,28 @@ class App:
             if self.x_jogador + JOGADOR_LARGURA < CENARIO_LIMITE_DIR:
                 self.x_jogador += JOGADOR_VELOCIDADE
 
-        if self.bolinha_esquerda:
-            if self.x_bolinha > CENARIO_LIMITE_ESQ:
-                self.x_bolinha -= BOLINHA_VELOCIDADE
+        if self.mover_bolinha:
+            if self.bolinha_esquerda:
+                if self.x_bolinha > CENARIO_LIMITE_ESQ:
+                    self.x_bolinha -= BOLINHA_VELOCIDADE
+                else:
+                    self.bolinha_esquerda = False
             else:
-                self.bolinha_esquerda = False
-        else:
-            if self.x_bolinha + BOLINHA_LARGURA < CENARIO_LIMITE_DIR:
-                self.x_bolinha += BOLINHA_VELOCIDADE
-            else:
-                self.bolinha_esquerda = True
+                if self.x_bolinha + BOLINHA_LARGURA < CENARIO_LIMITE_DIR:
+                    self.x_bolinha += BOLINHA_VELOCIDADE
+                else:
+                    self.bolinha_esquerda = True
 
-        if self.bolinha_baixo:
-            if self.y_bolinha + BOLINHA_ALTURA < CENARIO_LIMITE_BAIXO:
-                self.y_bolinha += BOLINHA_VELOCIDADE
+            if self.bolinha_baixo:
+                if self.y_bolinha + BOLINHA_ALTURA < CENARIO_LIMITE_BAIXO:
+                    self.y_bolinha += BOLINHA_VELOCIDADE
+                else:
+                    self.bolinha_baixo = False
             else:
-                self.bolinha_baixo = False
-        else:
-            if self.y_bolinha > CENARIO_LIMITE_CIMA:
-                self.y_bolinha -= BOLINHA_VELOCIDADE
-            else:
-                self.bolinha_baixo = True
+                if self.y_bolinha > CENARIO_LIMITE_CIMA:
+                    self.y_bolinha -= BOLINHA_VELOCIDADE
+                else:
+                    self.bolinha_baixo = True
         
 
         if self.y_bolinha + BOLINHA_ALTURA >= CENARIO_LIMITE_BAIXO:

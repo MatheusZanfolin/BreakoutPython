@@ -35,13 +35,13 @@ NUM_BLOCOS_POR_LINHA = 8
 NUM_LINHAS = 5
 
 class App:
-    def draw_text(self, surf, text, size, x, y):
+    def draw_text(self, text, size, x, y, cor):
 	font_name = pygame.font.match_font('arial')
 	font = pygame.font.Font(font_name, size)
-	text_surface = font.render(text, True, (255, 255, 255))
+	text_surface = font.render(text, True, cor)
 	text_rect = text_surface.get_rect()
 	text_rect.midtop = (x, y)
-	surf.blit(text_surface, text_rect)
+	self._display_surf.blit(text_surface, text_rect)
 
     def __init__(self):
         self._running = True
@@ -100,9 +100,8 @@ class App:
 
         self._display_surf.fill(BOLINHA_COR, (self.x_bolinha, self.y_bolinha, BOLINHA_LARGURA, BOLINHA_ALTURA))
 
-	pontoCentral = CENARIO_LIMITE_DIR / 2
-
-	self.draw_text(self._display_surf, 'text', 18, pontoCentral, 10)
+	
+	
 
         pygame.display.update()
 
@@ -234,7 +233,13 @@ class App:
             y_bloco += JOGADOR_ALTURA
 
             indice_linha += 1
-
+	pontoCentral = CENARIO_LIMITE_DIR / 2
+	if not self.mover_bolinha:
+		self.draw_text('Bem-vindo(a) ao Breakout!', 16, pontoCentral, 21 + 0 * JOGADOR_ALTURA, (0,0,0))
+		self.draw_text('Controles:', 16, pontoCentral, 21 + 1 * JOGADOR_ALTURA, (127,127,127))
+		self.draw_text('Mover esquerda: <-', 16, pontoCentral, 21 + 2 * JOGADOR_ALTURA, (127,127,127))
+		self.draw_text('Mover direita : ->', 16, pontoCentral, 21 + 3 * JOGADOR_ALTURA, (127,127,127))
+		self.draw_text('Aperte qualquer botao para comecar', 16, pontoCentral, 21 + 4 * JOGADOR_ALTURA, (255,255,255))
         pygame.display.update()
 
     def on_cleanup(self):

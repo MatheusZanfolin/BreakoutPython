@@ -1,9 +1,14 @@
+# -*- coding: utf-8 -*-
 import pygame
 from pygame.locals import *
 
 import random
-##from tkinter import messagebox
 import ctypes
+
+############################################
+################ Constantes ################
+############################################
+
 JOGADOR_ALTURA     = 20
 JOGADOR_LARGURA    = 80
 JOGADOR_COR        = (255, 99, 99)
@@ -30,6 +35,14 @@ NUM_BLOCOS_POR_LINHA = 8
 NUM_LINHAS = 5
 
 class App:
+    def draw_text(self, surf, text, size, x, y):
+	font_name = pygame.font.match_font('arial')
+	font = pygame.font.Font(font_name, size)
+	text_surface = font.render(text, True, (255, 255, 255))
+	text_rect = text_surface.get_rect()
+	text_rect.midtop = (x, y)
+	surf.blit(text_surface, text_rect)
+
     def __init__(self):
         self._running = True
         self._display_surf = None
@@ -38,6 +51,9 @@ class App:
     def on_init(self):
         pygame.init()
         self._display_surf = pygame.display.set_mode(self.size, pygame.HWSURFACE | pygame.DOUBLEBUF)
+
+        pygame.display.set_caption('Breakout')
+
         self._running = True
 
         ############################################
@@ -73,7 +89,7 @@ class App:
         ########## Inicializando bolinha ###########
         ############################################
 
-        self.bolinha_esquerda = True
+        self.bolinha_esquerda = random.randrange(10) < 5
         self.bolinha_baixo    = True
 
         self.x_bolinha = self.x_jogador + JOGADOR_LARGURA / 2
@@ -84,29 +100,33 @@ class App:
 
         self._display_surf.fill(BOLINHA_COR, (self.x_bolinha, self.y_bolinha, BOLINHA_LARGURA, BOLINHA_ALTURA))
 
+	pontoCentral = CENARIO_LIMITE_DIR / 2
+
+	self.draw_text(self._display_surf, 'text', 18, pontoCentral, 10)
+
         pygame.display.update()
 
         return True
  
-    def on_event(self, event):
+    def on_event(self, event): # Lidar com eventos
         if event.type == pygame.QUIT:
             self._running = False
         elif event.type == pygame.KEYDOWN:
-            self.mover_bolinha = True
-
-            if event.key == pygame.K_LEFT:
-                if self.x_jogador > CENARIO_LIMITE_ESQ:
-                    self.mover_esquerda = True
-            elif event.key == pygame.K_RIGHT:
-                if self.x_jogador + JOGADOR_LARGURA < CENARIO_LIMITE_DIR:
-                    self.mover_direita = True
+	        self.mover_bolinha = True
+	
+	        if event.key == pygame.K_LEFT:
+	            if self.x_jogador > CENARIO_LIMITE_ESQ:
+	                self.mover_esquerda = True
+	        elif event.key == pygame.K_RIGHT:
+	            if self.x_jogador + JOGADOR_LARGURA < CENARIO_LIMITE_DIR:
+	            	self.mover_direita = True
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_LEFT:
                 self.mover_esquerda = False
             elif event.key == pygame.K_RIGHT:
-                self.mover_direita = False
+        	self.mover_direita = False
 
-    def on_loop(self):
+    def on_loop(self): # Game loop
         clock = pygame.time.Clock()
 
         clock.tick(60)
@@ -143,11 +163,11 @@ class App:
         
 
         if self.y_bolinha + BOLINHA_ALTURA >= CENARIO_LIMITE_BAIXO:
-            resposta = ctypes.windll.user32.MessageBoxW(0, 'Deseja jogar novamente?', 'Derrota!', 5)
-            if resposta == 4:
-                self.on_init() ## repetir = 4
-            else:
-                self._running = False
+            #resposta = self.tkMessageBox.askretrycancel('Derrota', 'Deseja jogar novamente?')
+	    #if resposta == 4:
+            #    self.on_init() ## repetir = 4
+            #else:
+            self._running = False
             
         
         rect_jogador = Rect(self.x_jogador, self.y_jogador, JOGADOR_LARGURA, JOGADOR_ALTURA)
@@ -160,10 +180,6 @@ class App:
         y_bloco = 20
         x_bloco = 0
 
-
-        ### 0<=indiceLinha<NUM_LINHAS
-        
-        ### 0<=indiceColunas<NUM_BLOCOS_POR_LINHA
         ganhou = True
         for indiceLinha in range(0,NUM_LINHAS) :
             for indiceColuna in range(0,NUM_BLOCOS_POR_LINHA):
@@ -181,11 +197,11 @@ class App:
             y_bloco += JOGADOR_ALTURA
             
         if ganhou:
-            resposta = ctypes.windll.user32.MessageBoxW(0, 'Deseja jogar novamente?', 'Vitória!', 5)
-            if resposta:
-                self.on_init()
-            else:
-                self._running = False
+            #resposta = self.tkMessageBox.askretrycancel('Vitória', 'Deseja jogar novamente?')
+	    #if resposta:
+            #    self.on_init()
+            #else:
+            self._running = False
 
 
     def on_render(self):
@@ -234,6 +250,8 @@ class App:
             self.on_loop()
             self.on_render()
         self.on_cleanup()
+
+    
  
 if __name__ == "__main__" :
     theApp = App()
